@@ -5,7 +5,7 @@ import { can, requireActiveUser } from '$lib/server/authz';
 import { badRequest, forbidden, isAppError } from '$lib/server/httpErrors';
 import { logger } from '$lib/server/logger';
 import { serverPrisma } from '$lib/server/db/server';
-import type { Prisma } from '$lib/server/db/prisma-server';
+import type { Prisma } from '@prisma/client';
 import { parsePageParams, parseString } from '$lib/server/validation';
 import { requireBranch } from '$lib/server/branchContext';
 import { getBranchById } from '$lib/server/services/branchService';

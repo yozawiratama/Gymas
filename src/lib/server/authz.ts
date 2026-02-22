@@ -2,7 +2,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { error, redirect } from '@sveltejs/kit';
 import { forbidden } from '$lib/server/httpErrors';
 import { serverPrisma } from '$lib/server/db/server';
-import type { LegacyUserRole } from '$lib/server/db/prisma-server';
+import type { LegacyUserRole } from '@prisma/client';
 
 export type Role = LegacyUserRole;
 export type PermissionKey = string;

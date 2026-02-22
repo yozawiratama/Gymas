@@ -1,5 +1,5 @@
 import { serverPrisma } from '$lib/server/db/server';
-import type { Prisma } from '$lib/server/db/prisma-server';
+import type { Prisma } from '@prisma/client';
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 50;

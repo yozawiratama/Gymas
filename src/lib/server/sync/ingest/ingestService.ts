@@ -1,6 +1,6 @@
 import { serverPrisma } from '$lib/server/db/server';
 import { ensureDefaultBranch } from '$lib/server/services/branchService';
-import type { Prisma } from '$lib/server/db/prisma-server';
+import type { Prisma } from '@prisma/client';
 
 export type IngestEventInput = {
 	id: string;

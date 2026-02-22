@@ -8,7 +8,7 @@ declare global {
 			roles: string[];
 			permissions: Set<string>;
 			userIsActive: boolean | null;
-			legacyRole: import('$lib/server/db/prisma-server').LegacyUserRole | null;
+			legacyRole: import('@prisma/client').LegacyUserRole | null;
 			requestId?: string;
 			branchId: string | null;
 		}

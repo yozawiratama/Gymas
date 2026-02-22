@@ -1,6 +1,6 @@
 import { serverPrisma } from '$lib/server/db/server';
 import type { LocalTxClient } from '$lib/server/db/localTx';
-import type { MemberStatus, Prisma } from '$lib/server/db/prisma-server';
+import type { MemberStatus, Prisma } from '@prisma/client';
 
 export type MemberListItem = {
 	id: string;

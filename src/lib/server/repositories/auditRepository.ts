@@ -1,5 +1,5 @@
 import { serverPrisma } from '$lib/server/db/server';
-import type { Prisma } from '$lib/server/db/prisma-server';
+import type { Prisma } from '@prisma/client';
 
 export type AuditLogCreateInput = {
 	action: string;

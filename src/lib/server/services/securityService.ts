@@ -1,5 +1,5 @@
 import { Prisma } from '$lib/server/db/prisma';
-import type { Prisma as PrismaTypes } from '$lib/server/db/prisma-server';
+import type { Prisma as PrismaTypes } from '@prisma/client';
 import { serverPrisma } from '$lib/server/db/server';
 import { getLegacyRolePermissions } from '$lib/server/authz';
 import { badRequest, conflict, notFound } from '$lib/server/httpErrors';

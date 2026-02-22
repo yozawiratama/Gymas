@@ -1,5 +1,5 @@
 import { Prisma as PrismaValue } from '$lib/server/db/prisma';
-import type { Prisma as PrismaTypes } from '$lib/server/db/prisma-server';
+import type { Prisma as PrismaTypes } from '@prisma/client';
 import { logger } from '$lib/server/logger';
 import {
 	createAuditLog,

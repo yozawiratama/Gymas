@@ -1,6 +1,6 @@
 import { canRecordPayments, canVoidPayments, type ActiveUser } from '$lib/server/authz';
 import { Prisma as PrismaValue, PaymentMethod, PaymentStatus } from '$lib/server/db/prisma';
-import type { Prisma as PrismaTypes, PaymentMethod as PaymentMethodType } from '$lib/server/db/prisma-server';
+import type { Prisma as PrismaTypes, PaymentMethod as PaymentMethodType } from '@prisma/client';
 import { badRequest, forbidden, notFound, unauthorized } from '$lib/server/httpErrors';
 import { getMemberProfileBase } from '$lib/server/repositories/memberRepository';
 import {

@@ -1,4 +1,4 @@
-import type { Prisma } from '$lib/server/db/prisma-server';
+import type { Prisma } from '@prisma/client';
 import { badRequest, conflict, notFound } from '$lib/server/httpErrors';
 import {
 	countMembers,

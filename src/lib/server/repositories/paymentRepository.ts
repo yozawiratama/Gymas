@@ -1,6 +1,6 @@
 import { serverPrisma } from '$lib/server/db/server';
 import { PaymentStatus as PaymentStatusValue } from '$lib/server/db/prisma';
-import type { PaymentMethod, PaymentStatus, Prisma } from '$lib/server/db/prisma-server';
+import type { PaymentMethod, PaymentStatus, Prisma } from '@prisma/client';
 
 export type PaymentCreateInput = {
 	memberId: string;

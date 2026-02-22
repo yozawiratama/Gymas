@@ -1,5 +1,5 @@
 import type { LocalTxClient } from '$lib/server/db/localTx';
-import type { Prisma } from '$lib/server/db/prisma-server';
+import type { Prisma } from '@prisma/client';
 
 export type AttendanceRecord = {
 	id: string;

@@ -5,7 +5,7 @@
 - Version: 1.0
 - Date: February 22, 2026
 - Owner: Product Owner (Gymas)
-- Stakeholders: Owner, Staff, Trainer, Members, System Admin (ops)
+- Stakeholders: Owner, Staff, Trainer, Members, System Admin (Assumption / Operational role)
 
 ## 2. Executive Summary
 ### 2.1 Problem Statement
@@ -29,6 +29,7 @@ Small–medium gyms need a lightweight web system to manage members, memberships, 
 - Payment/transaction recording and history filters.
 - Manual check-in with active membership validation and attendance history.
 - Basic dashboard metrics (summary).
+- Trainer management: create trainer (Owner only), assign trainer to member, trainer view of assigned members (schedule is V2).
 
 ### 3.2 Out of Scope
 - Member-facing portal (unless later defined).
@@ -37,31 +38,31 @@ Small–medium gyms need a lightweight web system to manage members, memberships, 
 
 ### 3.3 Future / V2 Ideas
 - QR code check-in.
-- Trainer module enhancements and advanced reporting.
+- Trainer schedule view and advanced reporting.
 - Additional dashboard analytics.
 
 ## 4. Personas & Actors
 ### 4.1 Owner
 - Goals: Monitor business performance; manage access and trainers.
 - Responsibilities: Full access to all data and dashboards.
-- Permissions Summary: Full CRUD across modules; view all reports.
+- Permissions Summary: Full CRUD across modules; manage packages and trainer master data; view all reports; configure settings.
 
 ### 4.2 Staff
 - Goals: Execute daily operations (members, transactions, check-ins).
 - Responsibilities: Manage members, memberships, transactions, and attendance.
-- Permissions Summary: CRUD member, package, membership activation, transactions, check-in.
+- Permissions Summary: Create/edit members; view member detail; record transactions; perform check-in; activate membership using existing packages; assign trainer to member (if trainer exists).
 
 ### 4.3 Trainer
 - Goals: View assigned members and personal training schedule.
 - Responsibilities: Provide training services.
-- Permissions Summary: Read-only access to assigned members and schedule.
+- Permissions Summary: Read-only access to assigned members; schedule view is V2 and depends on schedule data.
 
 ### 4.4 Member
 - Goals: Maintain membership and check-in (offline or staff-driven).
 - Responsibilities: N/A in admin web app.
 - Permissions Summary: No access in MVP admin panel.
 
-### 4.5 System Admin (Optional)
+### 4.5 System Admin (Assumption / Operational role)
 - Goals: Maintain system configuration and support.
 - Responsibilities: Technical admin, backups, and monitoring.
 - Permissions Summary: Infrastructure-level access (not an application role unless needed).
@@ -172,23 +173,23 @@ Notes: Wording kept close to source. Priority is marked as MVP or V2 based on MV
 ### EPIC 5 – Trainer Management
 **FR-5.1 – Create Trainer**
 - Description: Nama, No HP, Specialty.
-- Priority: V2
+- Priority: MVP
 - Validation Rules: Name and phone required.
 - UI Notes: Trainer form.
 - Error States: Duplicate trainer by phone.
 
 **FR-5.2 – Assign Trainer to Member**
 - Description: Member dapat memiliki trainer aktif.
-- Priority: V2
+- Priority: MVP
 - Validation Rules: One active trainer per member (assumed).
 - UI Notes: Assignment control on member detail.
 - Error States: Trainer not found.
 
 **FR-5.3 – Trainer View**
 - Description: Trainer hanya bisa melihat assigned members dan jadwal personal training.
-- Priority: V2
+- Priority: MVP (assigned members view); V2 (schedule view).
 - Validation Rules: Restrict data to assigned members.
-- UI Notes: Trainer dashboard.
+- UI Notes: Trainer dashboard; assigned members view is MVP; schedule view depends on V2 schedule data (not in MVP data model).
 - Error States: Access denied.
 
 ### EPIC 6 – Attendance / Check-In System
@@ -238,6 +239,22 @@ Notes: Wording kept close to source. Priority is marked as MVP or V2 based on MV
 ## 7. Use Cases (Detailed)
 Use cases include required fields and reference FR IDs.
 
+### UC-0 Login & Access Control
+- Primary Actor: Owner, Staff, Trainer
+- Stakeholders: Owner, Staff, Trainer
+- Preconditions: User account exists and has an assigned role (Owner/Staff/Trainer).
+- Trigger: User opens login page and submits credentials.
+- Main Flow:
+1. User enters email and password.
+2. System validates credentials.
+3. System loads role permissions.
+4. System creates a session and routes to allowed modules.
+- Alternate Flows:
+1. Invalid credentials ? show error and deny access.
+2. Role not permitted for target module ? show access denied.
+- Postconditions: Authenticated session established with role-based access enforced.
+- Related FRs: FR-1.1, FR-1.2, FR-1.3
+
 ### UC-1 Register New Member
 - Primary Actor: Staff
 - Stakeholders: Owner, Member
@@ -255,12 +272,12 @@ Use cases include required fields and reference FR IDs.
 - Related FRs: FR-2.1
 
 ### UC-2 Create Package
-- Primary Actor: Staff
+- Primary Actor: Owner
 - Stakeholders: Owner
-- Preconditions: Authenticated Staff or Owner.
-- Trigger: Staff selects “Create Package”.
+- Preconditions: Owner authenticated.
+- Trigger: Owner selects "Create Package".
 - Main Flow:
-1. Staff enters package details.
+1. Owner enters package details.
 2. System validates fields.
 3. System saves package.
 - Alternate Flows:
@@ -271,7 +288,7 @@ Use cases include required fields and reference FR IDs.
 ### UC-3 Activate Membership
 - Primary Actor: Staff
 - Stakeholders: Owner, Member
-- Preconditions: Member active; package exists; staff authenticated.
+- Preconditions: Member active; package exists (created by Owner); staff authenticated.
 - Trigger: Staff selects “Activate Membership”.
 - Main Flow:
 1. Staff selects member and package.
@@ -318,7 +335,7 @@ Use cases include required fields and reference FR IDs.
 ### UC-6 Assign Trainer
 - Primary Actor: Owner or Staff
 - Stakeholders: Trainer, Member
-- Preconditions: Trainer exists; member exists.
+- Preconditions: Trainer exists (created by Owner); member exists.
 - Trigger: Owner/Staff selects “Assign Trainer”.
 - Main Flow:
 1. Select member.
@@ -343,7 +360,38 @@ Use cases include required fields and reference FR IDs.
 - Postconditions: Owner sees up-to-date metrics.
 - Related FRs: FR-7.1, FR-7.2, FR-7.3
 
+### UC-8 Edit Member & View Member Detail
+- Primary Actor: Staff
+- Stakeholders: Owner, Member
+- Preconditions: Staff authenticated; member exists.
+- Trigger: Staff opens member detail or selects edit action.
+- Main Flow:
+1. Staff opens member detail page.
+2. System shows membership status, expiry date, total attendance, and transaction history.
+3. Staff edits member fields and saves.
+4. System validates input and persists updates.
+- Alternate Flows:
+1. Invalid input ? show validation errors.
+2. Member not found ? show error.
+- Postconditions: Member detail displayed; updates saved if submitted.
+- Related FRs: FR-2.2, FR-2.4
+
+### UC-9 Create Trainer
+- Primary Actor: Owner
+- Stakeholders: Trainer
+- Preconditions: Owner authenticated.
+- Trigger: Owner selects "Create Trainer".
+- Main Flow:
+1. Owner enters trainer details.
+2. System validates required fields.
+3. System saves trainer.
+- Alternate Flows:
+1. Duplicate phone ? show error and prevent save.
+- Postconditions: Trainer created and available for assignment.
+- Related FRs: FR-5.1
+
 ## 8. RBAC / Permission Matrix
+Decision: Staff can activate memberships using existing packages and assign trainers, but cannot manage package or trainer master data; Owner has full access and settings configuration.
 | Feature/Action | Owner | Staff | Trainer | Member |
 |---|---|---|---|---|
 | Login | Yes | Yes | Yes | No |
@@ -351,7 +399,7 @@ Use cases include required fields and reference FR IDs.
 | Manage members (CRUD) | Yes | Yes | No | No |
 | Deactivate member | Yes | Yes | No | No |
 | View member detail | Yes | Yes | Assigned only | No |
-| Manage packages | Yes | Yes | No | No |
+| Manage packages | Yes | No | No | No |
 | Activate membership | Yes | Yes | No | No |
 | Record transactions | Yes | Yes | No | No |
 | View transaction history | Yes | Yes | No | No |
@@ -372,6 +420,7 @@ Use cases include required fields and reference FR IDs.
 - Attendance: id, member_id, checkin_at, created_by.
 - Trainer: id, name, phone, specialty.
 - TrainerAssignment: id, trainer_id, member_id, start_date, end_date, status.
+- Training schedule entity (e.g., TrainingSession) is deferred to V2 and is not part of the MVP data model.
 
 ### 9.2 Relationship Notes
 - Member has many Memberships, Transactions, Attendance.
@@ -401,7 +450,10 @@ Use cases include required fields and reference FR IDs.
 - AC-FR-1.1-1: Given valid admin credentials, when the admin submits the login form, then the system authenticates and starts a session.
 - AC-FR-1.1-2: Given invalid credentials, when the admin submits the login form, then the system shows an error and does not authenticate.
 - AC-FR-1.2-1: Given a user account, when role is assigned, then it must be one of Owner, Staff, Trainer.
-- AC-FR-1.3-1: Given a Staff user, when accessing restricted routes, then only member, transaction, and check-in modules are allowed.
+- AC-FR-1.3-1: Given a Staff user, when accessing restricted routes, then only member management (including membership activation using existing packages and trainer assignment), transaction recording, and check-in modules are allowed.
+- AC-FR-1.3-2: Given an Owner user, when accessing any module, then access is granted.
+- AC-FR-1.3-3: Given a Trainer user, when accessing member data, then only assigned members are visible and no write actions are allowed.
+- AC-FR-1.3-4: Given a Staff user, when attempting to manage package or trainer master data, then access is denied.
 
 - AC-FR-2.1-1: Given required fields are valid, when Staff submits create member, then a member is created.
 - AC-FR-2.2-1: Given an existing member, when Staff edits fields, then changes are saved.
@@ -411,6 +463,8 @@ Use cases include required fields and reference FR IDs.
 - AC-FR-3.1-1: Given valid package fields, when saved, then the package is created.
 - AC-FR-3.2-1: Given member, package, and start date, when activation is submitted, then expiry date is auto-calculated and stored.
 - AC-FR-3.3-1: Given end_date in the past, when membership status is computed, then it is Expired.
+- AC-FR-3.3-2: Given end_date in the future and not suspended, when membership status is computed, then it is Active.
+- AC-FR-3.3-3: Given a membership is marked Suspended, when membership status is computed, then it is Suspended.
 
 - AC-FR-4.1-1: Given a member and package, when transaction is created, then amount, method, and date are stored.
 - AC-FR-4.2-1: Given an unpaid transaction, when marked paid, then status updates to paid.
@@ -418,7 +472,8 @@ Use cases include required fields and reference FR IDs.
 
 - AC-FR-5.1-1: Given valid trainer fields, when created, then trainer is stored.
 - AC-FR-5.2-1: Given trainer and member, when assigned, then a trainer assignment is created and set active.
-- AC-FR-5.3-1: Given a trainer user, when viewing members, then only assigned members and schedules are visible.
+- AC-FR-5.3-1: Given a trainer user, when viewing members, then only assigned members are visible.
+- AC-FR-5.3-2 (V2): Given a trainer user, when viewing schedule, then only assigned schedule entries are visible.
 
 - AC-FR-6.1-1: Given an active membership, when Staff checks in a member, then attendance is recorded.
 - AC-FR-6.2-1: Given an expired membership, when Staff checks in, then the system blocks and warns.
@@ -429,6 +484,8 @@ Use cases include required fields and reference FR IDs.
 - AC-FR-7.3-1: Given memberships expiring within 7 days, when alerts load, then those memberships are listed.
 
 ### 12.2 UC Acceptance Criteria
+- AC-UC-0-1: Given valid credentials, when a user logs in, then the system creates a session and enforces role-based access.
+- AC-UC-0-2: Given invalid credentials, when a user logs in, then the system shows an error and does not create a session.
 - AC-UC-1-1: Given Staff is authenticated, when they submit a valid member form, then the member is created.
 - AC-UC-2-1: Given Staff is authenticated, when they submit a valid package form, then the package is created.
 - AC-UC-3-1: Given member is active, when membership is activated, then expiry date is calculated and membership is active.
@@ -437,23 +494,30 @@ Use cases include required fields and reference FR IDs.
 - AC-UC-5-1: Given transaction data is valid, when saved, then transaction is stored and can be marked paid.
 - AC-UC-6-1: Given trainer and member exist, when assigned, then trainer can view assigned member.
 - AC-UC-7-1: Given Owner logs in, when dashboard opens, then summary metrics are displayed.
+- AC-UC-8-1: Given Staff is authenticated, when member detail is opened, then status, expiry date, attendance total, and transaction history are shown.
+- AC-UC-8-2: Given Staff edits a member with valid data, when saved, then changes are persisted.
+- AC-UC-9-1: Given Owner submits valid trainer data, when saved, then the trainer is created.
 
 ## 13. Traceability Matrix
 | Epic | Use Case(s) | FR(s) | Acceptance Criteria |
 |---|---|---|---|
-| EPIC 1 Authentication & Role | UC-7 | FR-1.1, FR-1.2, FR-1.3 | AC-FR-1.1-1, AC-FR-1.1-2, AC-FR-1.2-1, AC-FR-1.3-1 |
-| EPIC 2 Member Management | UC-1, UC-4 | FR-2.1, FR-2.2, FR-2.3, FR-2.4 | AC-FR-2.1-1, AC-FR-2.2-1, AC-FR-2.3-1, AC-FR-2.4-1, AC-UC-1-1, AC-UC-4-1, AC-UC-4-2 |
-| EPIC 3 Membership & Package | UC-2, UC-3 | FR-3.1, FR-3.2, FR-3.3 | AC-FR-3.1-1, AC-FR-3.2-1, AC-FR-3.3-1, AC-UC-2-1, AC-UC-3-1 |
+| EPIC 1 Authentication & Role | UC-0 | FR-1.1, FR-1.2, FR-1.3 | AC-FR-1.1-1, AC-FR-1.1-2, AC-FR-1.2-1, AC-FR-1.3-1, AC-FR-1.3-2, AC-FR-1.3-3, AC-FR-1.3-4, AC-UC-0-1, AC-UC-0-2 |
+| EPIC 2 Member Management | UC-1, UC-4, UC-8 | FR-2.1, FR-2.2, FR-2.3, FR-2.4 | AC-FR-2.1-1, AC-FR-2.2-1, AC-FR-2.3-1, AC-FR-2.4-1, AC-UC-1-1, AC-UC-4-1, AC-UC-4-2, AC-UC-8-1, AC-UC-8-2 |
+| EPIC 3 Membership & Package | UC-2, UC-3 | FR-3.1, FR-3.2, FR-3.3 | AC-FR-3.1-1, AC-FR-3.2-1, AC-FR-3.3-1, AC-FR-3.3-2, AC-FR-3.3-3, AC-UC-2-1, AC-UC-3-1 |
 | EPIC 4 Payment & Transaction | UC-3, UC-5 | FR-4.1, FR-4.2, FR-4.3 | AC-FR-4.1-1, AC-FR-4.2-1, AC-FR-4.3-1, AC-UC-5-1 |
-| EPIC 5 Trainer Management | UC-6 | FR-5.1, FR-5.2, FR-5.3 | AC-FR-5.1-1, AC-FR-5.2-1, AC-FR-5.3-1, AC-UC-6-1 |
+| EPIC 5 Trainer Management | UC-6, UC-9 | FR-5.1, FR-5.2, FR-5.3 | AC-FR-5.1-1, AC-FR-5.2-1, AC-FR-5.3-1, AC-FR-5.3-2, AC-UC-6-1, AC-UC-9-1 |
 | EPIC 6 Attendance | UC-4 | FR-6.1, FR-6.2, FR-6.3 | AC-FR-6.1-1, AC-FR-6.2-1, AC-FR-6.3-1, AC-UC-4-1, AC-UC-4-2 |
 | EPIC 7 Dashboard & Reporting | UC-7 | FR-7.1, FR-7.2, FR-7.3 | AC-FR-7.1-1, AC-FR-7.2-1, AC-FR-7.3-1, AC-UC-7-1 |
 
 ## 14. Risks & Assumptions
 ### 14.1 Assumptions
-- Staff and Owner roles perform most operations; Trainer is read-only for assigned members.
+- Decision: Staff can activate memberships using existing packages and assign trainers; package and trainer master data remain Owner-only per FR-1.3 interpretation.
+- Decision: Trainer schedule is V2; MVP includes only assigned members view for trainers.
 - One active trainer assignment per member.
 - Payment status is tracked per transaction with a simple paid/unpaid state.
+- System Admin is an operational role outside application RBAC.
+- Performance target (2s page load for up to 10k members) is a provisional goal.
+- Daily backups, basic error monitoring, and audit logging are operational assumptions.
 
 ### 14.2 Risks
 - Scope creep into member portal or payment integrations.
